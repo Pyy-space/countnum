@@ -5,10 +5,13 @@ import { RoomStore } from './store';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS configuration - allow requests from frontend origin
-const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
+// CORS configuration - allow requests from multiple frontend origins
+const CORS_ORIGINS = process.env.CORS_ORIGINS 
+  ? process.env.CORS_ORIGINS.split(',')
+  : ['http://localhost:5173', 'https://pyy-space.github.io'];
+
 app.use(cors({
-  origin: CORS_ORIGIN,
+  origin: CORS_ORIGINS,
   credentials: true
 }));
 app.use(express.json());

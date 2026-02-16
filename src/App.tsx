@@ -150,10 +150,10 @@ const App: React.FC = () => {
             top: '20px', 
             left: '50%', 
             transform: 'translateX(-50%)',
-            backgroundColor: '#ef4444',
+            background: 'linear-gradient(to right, #ef4444, #f87171)',
             color: 'white',
             padding: '12px 24px',
-            borderRadius: '8px',
+            borderRadius: '12px',
             boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
             zIndex: 1000
           }}>

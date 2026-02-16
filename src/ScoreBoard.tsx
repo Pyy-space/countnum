@@ -58,45 +58,51 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
   const sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-2xl p-8 max-w-4xl w-full">
-        <h2 className="text-3xl font-bold text-center mb-6">计分游戏 - 分数板</h2>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+      <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 max-w-4xl w-full border border-white/20">
+        <h2 className="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">计分游戏 - 分数板</h2>
         
-        <div className="mb-6 p-4 bg-blue-50 rounded-lg">
+        <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-100">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-gray-600">房间码</p>
-              <p className="text-2xl font-bold text-blue-600">{room.id}</p>
+              <p className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{room.id}</p>
             </div>
             <div>
               <p className="text-sm text-gray-600">玩家人数</p>
-              <p className="text-2xl font-bold">{room.players.length}</p>
+              <p className="text-2xl font-bold text-gray-800">{room.players.length}</p>
             </div>
           </div>
         </div>
 
         <div className="mb-8">
-          <h3 className="text-lg font-semibold mb-4">玩家分数</h3>
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">玩家分数</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {sortedPlayers.map((player, index) => (
               <div
                 key={player.id}
-                className={`p-4 rounded-lg border-2 ${player.id === currentPlayerId ? 'bg-blue-100 border-blue-500' : 'bg-gray-50 border-gray-200'}`}
+                className={`p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-lg ${
+                  player.id === currentPlayerId 
+                    ? 'bg-gradient-to-r from-purple-100 to-pink-100 border-purple-400' 
+                    : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                }`}
               >
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-orange-500', 'bg-teal-500', 'bg-lime-500'][index % 10]}`}>
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold shadow-lg ${
+                      ['bg-gradient-to-br from-red-500 to-pink-500', 'bg-gradient-to-br from-blue-500 to-cyan-500', 'bg-gradient-to-br from-green-500 to-emerald-500', 'bg-gradient-to-br from-yellow-500 to-orange-500', 'bg-gradient-to-br from-purple-500 to-violet-500', 'bg-gradient-to-br from-pink-500 to-rose-500', 'bg-gradient-to-br from-indigo-500 to-blue-500', 'bg-gradient-to-br from-orange-500 to-red-500', 'bg-gradient-to-br from-teal-500 to-green-500', 'bg-gradient-to-br from-lime-500 to-green-500'][index % 10]
+                    }`}>
                       {player.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <p className="font-medium">{player.name}</p>
+                      <p className="font-medium text-gray-800">{player.name}</p>
                       {player.id === currentPlayerId && (
-                        <p className="text-xs bg-blue-500 text-white inline-block px-2 py-1 rounded">你</p>
+                        <p className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white inline-block px-2 py-1 rounded-full shadow-md">你</p>
                       )}
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-3xl font-bold text-gray-800">{player.score}</p>
+                    <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">{player.score}</p>
                     <p className="text-sm text-gray-500">分数</p>
                   </div>
                 </div>
@@ -109,9 +115,9 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
           <div className="flex gap-2 mb-4">
             <button
               onClick={() => setScoreMode('personal')}
-              className={`flex-1 py-2 px-4 rounded-lg font-semibold transition ${
+              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all duration-300 ${
                 scoreMode === 'personal' 
-                  ? 'bg-blue-600 text-white' 
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30' 
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
@@ -119,9 +125,9 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
             </button>
             <button
               onClick={() => setScoreMode('mutual')}
-              className={`flex-1 py-2 px-4 rounded-lg font-semibold transition ${
+              className={`flex-1 py-3 px-4 rounded-xl font-semibold transition-all duration-300 ${
                 scoreMode === 'mutual' 
-                  ? 'bg-blue-600 text-white' 
+                  ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg shadow-purple-500/30' 
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
@@ -129,11 +135,11 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
             </button>
           </div>
 
-          <h3 className="text-lg font-semibold mb-4">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">
             {scoreMode === 'personal' ? '给自己加减分' : '互相加减分'}
           </h3>
 
-          <div className="bg-gray-50 p-6 rounded-lg space-y-4">
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl space-y-4 border border-gray-200">
             {scoreMode === 'personal' ? (
               <>
                 <div>
@@ -145,20 +151,20 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                     value={points}
                     onChange={(e) => setPoints(Math.max(1, Number(e.target.value) || 1))}
                     min="1"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
                   />
                 </div>
                 
                 <div className="flex gap-3">
                   <button
                     onClick={handlePersonalAddScore}
-                    className="flex-1 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
+                    className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-lg shadow-green-500/30"
                   >
                     + 给自己加分
                   </button>
                   <button
                     onClick={handlePersonalSubtractScore}
-                    className="flex-1 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+                    className="flex-1 py-3 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-rose-700 transition-all duration-300 shadow-lg shadow-red-500/30"
                   >
                     - 给自己减分
                   </button>
@@ -174,7 +180,7 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                     <select
                       value={mutualPlayer1}
                       onChange={(e) => setMutualPlayer1(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
                     >
                       <option value="">选择玩家 A</option>
                       {room.players.map(player => (
@@ -192,7 +198,7 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                     <select
                       value={mutualPlayer2}
                       onChange={(e) => setMutualPlayer2(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
                     >
                       <option value="">选择玩家 B</option>
                       {room.players.map(player => (
@@ -213,7 +219,7 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                     value={points}
                     onChange={(e) => setPoints(Math.max(1, Number(e.target.value) || 1))}
                     min="1"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
                   />
                 </div>
                 
@@ -221,14 +227,14 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                   <button
                     onClick={handleMutualScore}
                     disabled={!mutualPlayer1 || !mutualPlayer2 || mutualPlayer1 === mutualPlayer2}
-                    className="flex-1 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50"
+                    className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-lg shadow-green-500/30 disabled:opacity-50"
                   >
                     玩家 A +{points}，玩家 B -{points}
                   </button>
                   <button
                     onClick={handleMutualReverseScore}
                     disabled={!mutualPlayer1 || !mutualPlayer2 || mutualPlayer1 === mutualPlayer2}
-                    className="flex-1 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition disabled:opacity-50"
+                    className="flex-1 py-3 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-xl font-semibold hover:from-orange-600 hover:to-amber-700 transition-all duration-300 shadow-lg shadow-orange-500/30 disabled:opacity-50"
                   >
                     玩家 A -{points}，玩家 B +{points}
                   </button>
@@ -242,13 +248,13 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
           <button
             onClick={onUndoScore}
             disabled={!canUndo}
-            className="flex-1 py-3 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition disabled:opacity-50"
+            className="flex-1 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl font-semibold hover:from-yellow-600 hover:to-orange-600 transition-all duration-300 shadow-lg shadow-yellow-500/30 disabled:opacity-50"
           >
             撤销上一步
           </button>
           <button
             onClick={onLeaveRoom}
-            className="flex-1 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+            className="flex-1 py-3 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-rose-700 transition-all duration-300 shadow-lg shadow-red-500/30"
           >
             离开房间
           </button>

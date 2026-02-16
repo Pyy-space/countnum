@@ -27,9 +27,9 @@ const Lobby: React.FC<LobbyProps> = ({ onCreateRoom, onJoinRoom, loading }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full">
-        <h1 className="text-4xl font-bold text-center mb-2 text-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+      <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 max-w-md w-full border border-white/20">
+        <h1 className="text-4xl font-bold text-center mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
           计分游戏
         </h1>
         <p className="text-center text-gray-600 mb-8">在线多人计分系统</p>
@@ -39,14 +39,14 @@ const Lobby: React.FC<LobbyProps> = ({ onCreateRoom, onJoinRoom, loading }) => {
             <button
               onClick={() => setMode('create')}
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-purple-500/30"
             >
               创建房间
             </button>
             <button
               onClick={() => setMode('join')}
               disabled={loading}
-              className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-purple-500/30"
             >
               加入房间
             </button>
@@ -66,7 +66,7 @@ const Lobby: React.FC<LobbyProps> = ({ onCreateRoom, onJoinRoom, loading }) => {
                 type="text"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
                 placeholder="输入你的名字"
                 maxLength={20}
                 required
@@ -79,7 +79,7 @@ const Lobby: React.FC<LobbyProps> = ({ onCreateRoom, onJoinRoom, loading }) => {
               <select
                 value={maxPlayers}
                 onChange={(e) => setMaxPlayers(Number(e.target.value))}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
               >
                 {[2, 3, 4, 5, 6, 7, 8, 9, 10].map(num => (
                   <option key={num} value={num}>{num} 人</option>
@@ -90,14 +90,14 @@ const Lobby: React.FC<LobbyProps> = ({ onCreateRoom, onJoinRoom, loading }) => {
               <button
                 type="button"
                 onClick={() => setMode('menu')}
-                className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition"
+                className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl hover:bg-gray-300 transition-all duration-300 font-semibold"
               >
                 返回
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-purple-500/30 font-semibold"
               >
                 {loading ? '创建中...' : '创建'}
               </button>
@@ -115,7 +115,7 @@ const Lobby: React.FC<LobbyProps> = ({ onCreateRoom, onJoinRoom, loading }) => {
                 type="text"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300"
                 placeholder="输入你的名字"
                 maxLength={20}
                 required
@@ -129,7 +129,7 @@ const Lobby: React.FC<LobbyProps> = ({ onCreateRoom, onJoinRoom, loading }) => {
                 type="text"
                 value={roomCode}
                 onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 uppercase"
                 placeholder="输入房间码"
                 maxLength={6}
                 required
@@ -139,14 +139,14 @@ const Lobby: React.FC<LobbyProps> = ({ onCreateRoom, onJoinRoom, loading }) => {
               <button
                 type="button"
                 onClick={() => setMode('menu')}
-                className="flex-1 bg-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-400 transition"
+                className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl hover:bg-gray-300 transition-all duration-300 font-semibold"
               >
                 返回
               </button>
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+                className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-purple-500/30 font-semibold"
               >
                 {loading ? '加入中...' : '加入'}
               </button>

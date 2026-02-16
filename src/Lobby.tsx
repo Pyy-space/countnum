@@ -4,9 +4,10 @@ interface LobbyProps {
   onCreateRoom: (playerName: string, maxPlayers: number) => void;
   onJoinRoom: (roomId: string, playerName: string) => void;
   loading: boolean;
+  error?: string;
 }
 
-const Lobby: React.FC<LobbyProps> = ({ onCreateRoom, onJoinRoom, loading }) => {
+const Lobby: React.FC<LobbyProps> = ({ onCreateRoom, onJoinRoom, loading, error }) => {
   const [mode, setMode] = useState<'menu' | 'create' | 'join'>('menu');
   const [playerName, setPlayerName] = useState('');
   const [maxPlayers, setMaxPlayers] = useState(4);
@@ -33,6 +34,12 @@ const Lobby: React.FC<LobbyProps> = ({ onCreateRoom, onJoinRoom, loading }) => {
           计分游戏
         </h1>
         <p className="text-center text-gray-600 mb-8">在线多人计分系统</p>
+
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-700 text-sm">{error}</p>
+          </div>
+        )}
 
         {mode === 'menu' && (
           <div className="space-y-4">

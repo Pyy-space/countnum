@@ -20,9 +20,10 @@ interface WaitingRoomProps {
   onSetReady: (isReady: boolean) => void;
   onStartGame: () => void;
   onLeaveRoom: () => void;
+  error?: string;
 }
 
-const WaitingRoom: React.FC<WaitingRoomProps> = ({ room, currentPlayerId, onSetReady, onStartGame, onLeaveRoom }) => {
+const WaitingRoom: React.FC<WaitingRoomProps> = ({ room, currentPlayerId, onSetReady, onStartGame, onLeaveRoom, error }) => {
   const currentPlayer = room.players.find(p => p.id === currentPlayerId);
   const isReady = currentPlayer?.isReady || false;
   const allReady = room.players.length >= 2 && room.players.every(p => p.isReady);
@@ -79,6 +80,12 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ room, currentPlayerId, onSetR
         </div>
 
         <div className="space-y-3">
+          {error && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+          )}
+          
           {room.players.length < 2 && (
             <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
               <p className="text-yellow-700">需要至少2名玩家才能开始游戏</p>

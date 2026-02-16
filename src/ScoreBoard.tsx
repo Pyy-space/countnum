@@ -19,9 +19,10 @@ interface ScoreBoardProps {
   currentPlayerId: string;
   onUpdateScore: (playerId: string, points: number) => void;
   onLeaveRoom: () => void;
+  error?: string;
 }
 
-const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdateScore, onLeaveRoom }) => {
+const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdateScore, onLeaveRoom, error }) => {
   const [selectedPlayer, setSelectedPlayer] = useState<string>('');
   const [points, setPoints] = useState<number>(1);
 
@@ -92,6 +93,13 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
 
         <div className="mb-6">
           <h3 className="text-lg font-semibold mb-4">更新分数 / Update Score</h3>
+          
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-700 text-sm">{error}</p>
+            </div>
+          )}
+          
           <div className="bg-gray-50 p-6 rounded-lg space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

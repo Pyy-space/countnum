@@ -33,6 +33,34 @@ const App: React.FC = () => {
     checkBackend();
   }, []);
 
+  // Check for saved room and player on mount
+  useEffect(() => {
+    const savedRoomId = localStorage.getItem('savedRoomId');
+    const savedPlayerId = localStorage.getItem('savedPlayerId');
+
+    if (savedRoomId && savedPlayerId) {
+      const reconnect = async () => {
+        try {
+          const { room } = await apiService.getRoom(savedRoomId);
+          const player = room.players.find(p => p.id === savedPlayerId);
+          
+          if (player) {
+            setCurrentRoom(room);
+            setCurrentPlayerId(savedPlayerId);
+          } else {
+            localStorage.removeItem('savedRoomId');
+            localStorage.removeItem('savedPlayerId');
+          }
+        } catch (err) {
+          console.error('Failed to reconnect to room:', err);
+          localStorage.removeItem('savedRoomId');
+          localStorage.removeItem('savedPlayerId');
+        }
+      };
+      reconnect();
+    }
+  }, []);
+
   // Poll for room updates when in a room
   useEffect(() => {
     if (!currentRoom) return;
@@ -63,6 +91,8 @@ const App: React.FC = () => {
       const { room, playerId } = await apiService.createRoom(playerName, maxPlayers);
       setCurrentRoom(room);
       setCurrentPlayerId(playerId);
+      localStorage.setItem('savedRoomId', room.id);
+      localStorage.setItem('savedPlayerId', playerId);
     } catch (err) {
       console.error('Failed to create room:', err);
       setError('Failed to create room. Please ensure the backend server is running.');
@@ -78,6 +108,8 @@ const App: React.FC = () => {
       const { room, playerId } = await apiService.joinRoom(roomId, playerName);
       setCurrentRoom(room);
       setCurrentPlayerId(playerId);
+      localStorage.setItem('savedRoomId', room.id);
+      localStorage.setItem('savedPlayerId', playerId);
     } catch (err: any) {
       console.error('Failed to join room:', err);
       const errorMsg = err.response?.data?.error || 'Failed to join room. Please check the room code.';
@@ -139,11 +171,14 @@ const App: React.FC = () => {
       await apiService.leaveRoom(currentRoom.id, currentPlayerId);
       setCurrentRoom(null);
       setCurrentPlayerId('');
+      localStorage.removeItem('savedRoomId');
+      localStorage.removeItem('savedPlayerId');
     } catch (err) {
       console.error('Failed to leave room:', err);
-      // Still leave the room locally even if the API call fails
       setCurrentRoom(null);
       setCurrentPlayerId('');
+      localStorage.removeItem('savedRoomId');
+      localStorage.removeItem('savedPlayerId');
     }
   };
 

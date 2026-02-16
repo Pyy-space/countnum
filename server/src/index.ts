@@ -3,10 +3,14 @@ import cors from 'cors';
 import { RoomStore } from './store';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
+// CORS configuration - allow requests from frontend origin
+const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5173';
+app.use(cors({
+  origin: CORS_ORIGIN,
+  credentials: true
+}));
 app.use(express.json());
 
 // In-memory store

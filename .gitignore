@@ -3,3 +3,4 @@ dist
 .env
 server/node_modules
 server/dist
+server/.env

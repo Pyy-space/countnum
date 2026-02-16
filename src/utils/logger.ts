@@ -14,9 +14,19 @@ class Logger {
 
   constructor() {
     // Enable logging in development mode
-    // In Vite, check environment using import.meta
-    this.isDevelopment = typeof import.meta !== 'undefined' && 
-                         (import.meta as any).env?.MODE !== 'production';
+    // Check if we're running in Vite development environment
+    // In production builds, logs will be minimized
+    this.isDevelopment = true; // Default to development mode for safety
+    try {
+      // Try to access Vite's environment if available
+      if (typeof import.meta !== 'undefined' && 'env' in import.meta) {
+        const env = (import.meta as { env?: { MODE?: string } }).env;
+        this.isDevelopment = env?.MODE !== 'production';
+      }
+    } catch {
+      // If import.meta is not available (e.g., in tests), default to development
+      this.isDevelopment = true;
+    }
   }
 
   /**

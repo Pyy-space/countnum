@@ -181,6 +181,27 @@ app.put('/api/rooms/:roomId/score', (req: Request, res: Response) => {
   }
 });
 
+// Undo last score change
+app.post('/api/rooms/:roomId/undo', (req: Request, res: Response) => {
+  try {
+    const { roomId } = req.params;
+
+    const room = roomStore.undoScore(roomId.toUpperCase());
+
+    if (!room) {
+      return res.status(404).json({ error: 'Room not found' });
+    }
+
+    console.log(`Undo score change in room ${roomId}`);
+    
+    res.json({ room });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to undo score';
+    console.error('Error undoing score:', error);
+    res.status(400).json({ error: errorMessage });
+  }
+});
+
 // Leave room
 app.delete('/api/rooms/:roomId/leave', (req: Request, res: Response) => {
   try {

@@ -89,6 +89,11 @@ class ApiService {
     return response.data;
   }
 
+  async undoScore(roomId: string): Promise<UpdateRoomResponse> {
+    const response = await this.axiosInstance.post(`/rooms/${roomId}/undo`);
+    return response.data;
+  }
+
   async leaveRoom(roomId: string, playerId: string): Promise<{ room: Room | null; wasDeleted: boolean }> {
     const response = await this.axiosInstance.delete(`/rooms/${roomId}/leave`, {
       data: { playerId },

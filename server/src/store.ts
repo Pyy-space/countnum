@@ -11,6 +11,12 @@ export interface Room {
   players: Player[];
   isPlaying: boolean;
   createdAt: Date;
+  history: RoomHistory[];
+}
+
+export interface RoomHistory {
+  timestamp: number;
+  players: Player[];
 }
 
 export class RoomStore {
@@ -30,7 +36,8 @@ export class RoomStore {
         isReady: false
       }],
       isPlaying: false,
-      createdAt: new Date()
+      createdAt: new Date(),
+      history: []
     };
 
     this.rooms.set(roomId, room);
@@ -117,7 +124,41 @@ export class RoomStore {
     }
 
     player.score += points;
+
+    this.addHistory(room);
+
     return room;
+  }
+
+  undoScore(roomId: string): Room | null {
+    const room = this.rooms.get(roomId);
+    if (!room) {
+      return null;
+    }
+
+    if (room.history.length === 0) {
+      throw new Error('No history to undo');
+    }
+
+    const lastState = room.history.pop();
+    if (lastState) {
+      room.players = lastState.players;
+    }
+
+    return room;
+  }
+
+  private addHistory(room: Room): void {
+    const historyEntry: RoomHistory = {
+      timestamp: Date.now(),
+      players: JSON.parse(JSON.stringify(room.players))
+    };
+
+    room.history.push(historyEntry);
+
+    if (room.history.length > 50) {
+      room.history.shift();
+    }
   }
 
   leaveRoom(roomId: string, playerId: string): { room: Room | null; wasDeleted: boolean } {
@@ -129,7 +170,6 @@ export class RoomStore {
     room.players = room.players.filter(p => p.id !== playerId);
     this.playerToRoom.delete(playerId);
 
-    // If no players left, delete the room
     if (room.players.length === 0) {
       this.rooms.delete(roomId);
       return { room: null, wasDeleted: true };
@@ -138,12 +178,10 @@ export class RoomStore {
     return { room, wasDeleted: false };
   }
 
-  // Cleanup old rooms (called periodically)
   cleanupOldRooms(maxAgeMs: number = 24 * 60 * 60 * 1000): void {
     const now = Date.now();
     for (const [roomId, room] of this.rooms.entries()) {
       if (now - room.createdAt.getTime() > maxAgeMs) {
-        // Clean up player mappings
         for (const player of room.players) {
           this.playerToRoom.delete(player.id);
         }

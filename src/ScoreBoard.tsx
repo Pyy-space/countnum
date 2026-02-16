@@ -12,22 +12,26 @@ interface Room {
   maxPlayers: number;
   players: Player[];
   isPlaying: boolean;
+  history?: any[];
 }
 
 interface ScoreBoardProps {
   room: Room;
   currentPlayerId: string;
   onUpdateScore: (playerId: string, points: number) => void;
+  onUndoScore: () => void;
   onLeaveRoom: () => void;
 }
 
 type ScoreMode = 'personal' | 'mutual';
 
-const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdateScore, onLeaveRoom }) => {
+const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdateScore, onUndoScore, onLeaveRoom }) => {
   const [scoreMode, setScoreMode] = useState<ScoreMode>('personal');
   const [points, setPoints] = useState<number>(1);
   const [mutualPlayer1, setMutualPlayer1] = useState<string>('');
   const [mutualPlayer2, setMutualPlayer2] = useState<string>('');
+
+  const canUndo = room.history && room.history.length > 0;
 
   const handlePersonalAddScore = () => {
     onUpdateScore(currentPlayerId, points);
@@ -234,16 +238,26 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
           </div>
         </div>
 
-        <button
-          onClick={onLeaveRoom}
-          className="w-full py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
-        >
-          离开房间
-        </button>
+        <div className="flex gap-3 mb-6">
+          <button
+            onClick={onUndoScore}
+            disabled={!canUndo}
+            className="flex-1 py-3 bg-yellow-500 text-white rounded-lg font-semibold hover:bg-yellow-600 transition disabled:opacity-50"
+          >
+            撤销上一步
+          </button>
+          <button
+            onClick={onLeaveRoom}
+            className="flex-1 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+          >
+            离开房间
+          </button>
+        </div>
 
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>给自己加减分：只能给自己加分或减分</p>
           <p>互相加减分：选择两个玩家，一个加分一个减分</p>
+          <p>撤销：回退到上一次记分操作</p>
         </div>
       </div>
     </div>

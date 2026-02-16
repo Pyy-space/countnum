@@ -115,6 +115,18 @@ const App: React.FC = () => {
     }
   };
 
+  const onUndoScore = async () => {
+    if (!currentRoom) return;
+    try {
+      const { room } = await apiService.undoScore(currentRoom.id);
+      setCurrentRoom(room);
+    } catch (err: any) {
+      console.error('Failed to undo score:', err);
+      const errorMsg = err.response?.data?.error || 'Failed to undo score.';
+      setError(errorMsg);
+    }
+  };
+
   const onLeaveRoom = async () => {
     if (!currentRoom) return;
     try {
@@ -174,6 +186,7 @@ const App: React.FC = () => {
       room={currentRoom}
       currentPlayerId={currentPlayerId}
       onUpdateScore={onUpdateScore}
+      onUndoScore={onUndoScore}
       onLeaveRoom={onLeaveRoom}
     />
   );

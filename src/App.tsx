@@ -150,14 +150,14 @@ const App: React.FC = () => {
             top: '20px', 
             left: '50%', 
             transform: 'translateX(-50%)',
-            background: 'linear-gradient(to right, #ef4444, #f87171)',
+            background: 'linear-gradient(to right, #ef4444, #dc2626)',
             color: 'white',
             padding: '12px 24px',
             borderRadius: '12px',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
             zIndex: 1000
           }}>
-            {error}
+            ⚠️ {error}
           </div>
         )}
         <Lobby

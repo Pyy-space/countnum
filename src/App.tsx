@@ -42,6 +42,12 @@ const App: React.FC = () => {
       try {
         const { room } = await apiService.getRoom(roomId);
         setCurrentRoom(room);
+        
+        // Auto-start game when all players are ready
+        if (!room.isPlaying && room.players.length >= 2 && room.players.every(p => p.isReady)) {
+          const { room: updatedRoom } = await apiService.startGame(roomId);
+          setCurrentRoom(updatedRoom);
+        }
       } catch (err) {
         console.error('Failed to poll room updates:', err);
       }

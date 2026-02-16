@@ -28,16 +28,16 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ room, currentPlayerId, onSetR
   const allReady = room.players.length >= 2 && room.players.every(p => p.isReady);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 cute-pattern flex items-center justify-center p-4 relative">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-purple-950 to-slate-900 cute-pattern flex items-center justify-center p-4 relative">
       <div className="absolute inset-0 star-pattern"></div>
-      <div className="bg-slate-800/90 backdrop-blur-sm rounded-2xl shadow-2xl p-8 max-w-2xl w-full border border-purple-500/30 relative z-10">
-        <h2 className="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">🎮 计分游戏 - 等待室 ✨</h2>
+      <div className="bg-slate-900/95 backdrop-blur-sm rounded-2xl shadow-2xl p-8 max-w-2xl w-full border border-violet-500/40 relative z-10">
+        <h2 className="text-3xl font-bold text-center mb-6 bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent"><span className="text-5xl">🎮</span> 计分游戏 - 等待室 <span className="text-5xl">✨</span></h2>
         
-        <div className="mb-6 p-4 bg-gradient-to-r from-purple-900/50 to-pink-900/50 rounded-xl border border-purple-500/30">
+        <div className="mb-6 p-4 bg-gradient-to-r from-violet-900/50 to-fuchsia-900/50 rounded-xl border border-violet-500/40">
           <div className="flex justify-between items-center">
             <div>
               <p className="text-sm text-purple-300">🔑 房间码</p>
-              <p className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{room.id}</p>
+              <p className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">{room.id}</p>
             </div>
             <div>
               <p className="text-sm text-purple-300">👥 玩家人数</p>
@@ -54,8 +54,8 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ room, currentPlayerId, onSetR
                 key={player.id}
                 className={`p-4 rounded-xl flex justify-between items-center transition-all duration-300 ${
                   player.id === currentPlayerId 
-                    ? 'bg-gradient-to-r from-purple-900/50 to-pink-900/50 border-2 border-purple-400' 
-                    : 'bg-slate-700/50 hover:bg-slate-700'
+                    ? 'bg-gradient-to-r from-violet-900/50 to-fuchsia-900/50 border-2 border-violet-400' 
+                    : 'bg-slate-800/50 hover:bg-slate-800'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -66,7 +66,7 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ room, currentPlayerId, onSetR
                   </div>
                   <span className="font-medium text-white">{player.name}</span>
                   {player.id === currentPlayerId && (
-                    <span className="text-xs bg-gradient-to-r from-purple-600 to-pink-600 text-white px-2 py-1 rounded-full shadow-md">👤 你</span>
+                    <span className="text-xs bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white px-2 py-1 rounded-full shadow-md">👤 你</span>
                   )}
                 </div>
                 <div>
@@ -95,25 +95,16 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ room, currentPlayerId, onSetR
             onClick={() => onSetReady(!isReady)}
             className={`w-full py-3 rounded-xl font-semibold transition-all duration-300 ${
               isReady
-                ? 'bg-slate-700 text-purple-300 hover:bg-slate-600'
-                : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-lg shadow-green-500/30'
+                ? 'bg-slate-800 text-purple-300 hover:bg-slate-700'
+                : 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-lg shadow-green-500/40'
             }`}
           >
             {isReady ? '❌ 取消准备' : '✅ 准备'}
           </button>
 
-          {allReady && (
-            <button
-              onClick={onStartGame}
-              className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-lg shadow-purple-500/30"
-            >
-              🎮 开始游戏
-            </button>
-          )}
-
           <button
             onClick={onLeaveRoom}
-            className="w-full py-3 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-rose-700 transition-all duration-300 shadow-lg shadow-red-500/30"
+            className="w-full py-3 bg-gradient-to-r from-red-500 to-rose-600 text-white rounded-xl font-semibold hover:from-red-600 hover:to-rose-700 transition-all duration-300 shadow-lg shadow-red-500/40"
           >
               🚪 离开房间
           </button>

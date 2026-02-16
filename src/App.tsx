@@ -71,8 +71,8 @@ const App: React.FC = () => {
         const { room } = await apiService.getRoom(roomId);
         setCurrentRoom(room);
         
-        // Auto-start game when all players are ready
-        if (!room.isPlaying && room.players.length >= 2 && room.players.every(p => p.isReady)) {
+        // Auto-start game when all players are ready and room is full
+        if (!room.isPlaying && room.players.length === room.maxPlayers && room.players.every(p => p.isReady)) {
           const { room: updatedRoom } = await apiService.startGame(roomId);
           setCurrentRoom(updatedRoom);
         }

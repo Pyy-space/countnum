@@ -85,9 +85,9 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ room, currentPlayerId, onSetR
         </div>
 
         <div className="space-y-3">
-          {room.players.length < 2 && (
+          {room.players.length < room.maxPlayers && (
             <div className="p-4 bg-gradient-to-r from-yellow-900/30 to-orange-900/30 border border-yellow-500/30 rounded-xl text-center">
-              <p className="text-yellow-400 font-medium">⚠️ 需要至少2名玩家才能开始游戏</p>
+              <p className="text-yellow-400 font-medium">⏳ 等待玩家加入 ({room.players.length}/{room.maxPlayers})</p>
             </div>
           )}
 
@@ -112,6 +112,7 @@ const WaitingRoom: React.FC<WaitingRoomProps> = ({ room, currentPlayerId, onSetR
 
         <div className="mt-6 text-center text-sm text-purple-400">
           <p>📢 分享房间码给朋友加入游戏哦 🎉</p>
+          <p className="mt-1">⚡ 所有玩家准备好后游戏将自动开始</p>
         </div>
       </div>
     </div>

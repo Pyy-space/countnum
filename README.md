@@ -262,16 +262,20 @@ For detailed backend deployment instructions, see [server/README.md](./server/RE
 
 The frontend can be deployed to GitHub Pages for free hosting.
 
-**Step 1: Update Environment Variables**
+**Step 1: Verify Environment Variables**
 
-Before building, update your production environment variables. Create a `.env.production` file:
+The repository includes a `.env.production` file with the default production backend URL:
 
 ```bash
-# .env.production
+# .env.production (already in repository)
 VITE_API_URL=https://countnum-backend.onrender.com/api
 ```
 
-Replace `countnum-backend.onrender.com` with your actual Render backend URL.
+If you're using a different backend URL, you can either:
+- Update the `.env.production` file before pushing to GitHub, or
+- Set a GitHub Secret named `VITE_API_URL` in your repository settings (Settings → Secrets → Actions)
+
+The GitHub Actions workflow will use the secret if available, otherwise it falls back to the value in `.env.production`.
 
 **Step 2: Build the Frontend**
 

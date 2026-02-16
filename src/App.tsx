@@ -37,9 +37,10 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!currentRoom) return;
 
+    const roomId = currentRoom.id;
     const pollInterval = setInterval(async () => {
       try {
-        const { room } = await apiService.getRoom(currentRoom.id);
+        const { room } = await apiService.getRoom(roomId);
         setCurrentRoom(room);
       } catch (err) {
         console.error('Failed to poll room updates:', err);

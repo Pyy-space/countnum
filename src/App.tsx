@@ -50,11 +50,18 @@ const App: React.FC = () => {
           } else {
             localStorage.removeItem('savedRoomId');
             localStorage.removeItem('savedPlayerId');
+            setError('房间已解散，请重新创建或加入房间');
           }
-        } catch (err) {
+        } catch (err: any) {
           console.error('Failed to reconnect to room:', err);
           localStorage.removeItem('savedRoomId');
           localStorage.removeItem('savedPlayerId');
+          
+          if (err.response?.status === 404) {
+            setError('房间不存在或已解散，请重新创建或加入房间');
+          } else {
+            setError('连接房间失败，请检查网络连接');
+          }
         }
       };
       reconnect();
@@ -76,8 +83,18 @@ const App: React.FC = () => {
           const { room: updatedRoom } = await apiService.startGame(roomId);
           setCurrentRoom(updatedRoom);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Failed to poll room updates:', err);
+        
+        // If room doesn't exist, clear local state
+        if (err.response?.status === 404) {
+          clearInterval(pollInterval);
+          setCurrentRoom(null);
+          setCurrentPlayerId('');
+          localStorage.removeItem('savedRoomId');
+          localStorage.removeItem('savedPlayerId');
+          setError('房间已解散，请重新创建或加入房间');
+        }
       }
     }, 2000);
 

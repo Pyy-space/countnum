@@ -29,8 +29,6 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
   const [mutualPlayer1, setMutualPlayer1] = useState<string>('');
   const [mutualPlayer2, setMutualPlayer2] = useState<string>('');
 
-  const currentPlayer = room.players.find(p => p.id === currentPlayerId);
-
   const handlePersonalAddScore = () => {
     onUpdateScore(currentPlayerId, points);
   };
@@ -42,6 +40,13 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
   const handleMutualScore = () => {
     if (mutualPlayer1 && mutualPlayer2 && mutualPlayer1 !== mutualPlayer2) {
       onUpdateScore(mutualPlayer1, points);
+      onUpdateScore(mutualPlayer2, -points);
+    }
+  };
+
+  const handleMutualReverseScore = () => {
+    if (mutualPlayer1 && mutualPlayer2 && mutualPlayer1 !== mutualPlayer2) {
+      onUpdateScore(mutualPlayer1, -points);
       onUpdateScore(mutualPlayer2, points);
     }
   };
@@ -116,22 +121,17 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
-              互相加分
+              互相加减分
             </button>
           </div>
 
           <h3 className="text-lg font-semibold mb-4">
-            {scoreMode === 'personal' ? '给自己加减分' : '互相加分'}
+            {scoreMode === 'personal' ? '给自己加减分' : '互相加减分'}
           </h3>
 
           <div className="bg-gray-50 p-6 rounded-lg space-y-4">
             {scoreMode === 'personal' ? (
               <>
-                <div className="p-4 bg-blue-50 rounded-lg mb-4">
-                  <p className="font-medium text-blue-800">当前玩家</p>
-                  <p className="text-xl font-bold text-blue-600">{currentPlayer?.name}</p>
-                </div>
-                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     分数
@@ -219,7 +219,14 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                     disabled={!mutualPlayer1 || !mutualPlayer2 || mutualPlayer1 === mutualPlayer2}
                     className="flex-1 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50"
                   >
-                    给两个玩家都加分
+                    玩家 A +{points}，玩家 B -{points}
+                  </button>
+                  <button
+                    onClick={handleMutualReverseScore}
+                    disabled={!mutualPlayer1 || !mutualPlayer2 || mutualPlayer1 === mutualPlayer2}
+                    className="flex-1 py-3 bg-orange-600 text-white rounded-lg font-semibold hover:bg-orange-700 transition disabled:opacity-50"
+                  >
+                    玩家 A -{points}，玩家 B +{points}
                   </button>
                 </div>
               </>
@@ -236,7 +243,7 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
 
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>给自己加减分：只能给自己加分或减分</p>
-          <p>互相加分：选择两个玩家，都加分</p>
+          <p>互相加减分：选择两个玩家，一个加分一个减分</p>
         </div>
       </div>
     </div>

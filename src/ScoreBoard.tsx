@@ -21,25 +21,31 @@ interface ScoreBoardProps {
   onLeaveRoom: () => void;
 }
 
+type ScoreMode = 'personal' | 'mutual';
+
 const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdateScore, onLeaveRoom }) => {
-  const [selectedPlayer, setSelectedPlayer] = useState<string>('');
+  const [scoreMode, setScoreMode] = useState<ScoreMode>('personal');
   const [points, setPoints] = useState<number>(1);
+  const [mutualPlayer1, setMutualPlayer1] = useState<string>('');
+  const [mutualPlayer2, setMutualPlayer2] = useState<string>('');
 
   const currentPlayer = room.players.find(p => p.id === currentPlayerId);
 
-  const handleAddScore = () => {
-    if (selectedPlayer) {
-      onUpdateScore(selectedPlayer, points);
+  const handlePersonalAddScore = () => {
+    onUpdateScore(currentPlayerId, points);
+  };
+
+  const handlePersonalSubtractScore = () => {
+    onUpdateScore(currentPlayerId, -points);
+  };
+
+  const handleMutualScore = () => {
+    if (mutualPlayer1 && mutualPlayer2 && mutualPlayer1 !== mutualPlayer2) {
+      onUpdateScore(mutualPlayer1, points);
+      onUpdateScore(mutualPlayer2, points);
     }
   };
 
-  const handleSubtractScore = () => {
-    if (selectedPlayer) {
-      onUpdateScore(selectedPlayer, -points);
-    }
-  };
-
-  // 按分数排序玩家
   const sortedPlayers = [...room.players].sort((a, b) => b.score - a.score);
 
   return (
@@ -50,18 +56,18 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
         <div className="mb-6 p-4 bg-blue-50 rounded-lg">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-sm text-gray-600">房间码 / Room Code</p>
+              <p className="text-sm text-gray-600">房间码</p>
               <p className="text-2xl font-bold text-blue-600">{room.id}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">玩家人数 / Players</p>
+              <p className="text-sm text-gray-600">玩家人数</p>
               <p className="text-2xl font-bold">{room.players.length}</p>
             </div>
           </div>
         </div>
 
         <div className="mb-8">
-          <h3 className="text-lg font-semibold mb-4">玩家分数 / Player Scores</h3>
+          <h3 className="text-lg font-semibold mb-4">玩家分数</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {sortedPlayers.map((player, index) => (
               <div
@@ -91,55 +97,133 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
         </div>
 
         <div className="mb-6">
-          <h3 className="text-lg font-semibold mb-4">更新分数 / Update Score</h3>
+          <div className="flex gap-2 mb-4">
+            <button
+              onClick={() => setScoreMode('personal')}
+              className={`flex-1 py-2 px-4 rounded-lg font-semibold transition ${
+                scoreMode === 'personal' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              给自己加减分
+            </button>
+            <button
+              onClick={() => setScoreMode('mutual')}
+              className={`flex-1 py-2 px-4 rounded-lg font-semibold transition ${
+                scoreMode === 'mutual' 
+                  ? 'bg-blue-600 text-white' 
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              互相加分
+            </button>
+          </div>
+
+          <h3 className="text-lg font-semibold mb-4">
+            {scoreMode === 'personal' ? '给自己加减分' : '互相加分'}
+          </h3>
+
           <div className="bg-gray-50 p-6 rounded-lg space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                选择玩家 / Select Player
-              </label>
-              <select
-                value={selectedPlayer}
-                onChange={(e) => setSelectedPlayer(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">请选择玩家</option>
-                {room.players.map(player => (
-                  <option key={player.id} value={player.id}>
-                    {player.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                分数 / Points
-              </label>
-              <input
-                type="number"
-                value={points}
-                onChange={(e) => setPoints(Math.max(1, Number(e.target.value) || 1))}
-                min="1"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            
-            <div className="flex gap-3">
-              <button
-                onClick={handleAddScore}
-                disabled={!selectedPlayer}
-                className="flex-1 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50"
-              >
-                + 增加分数
-              </button>
-              <button
-                onClick={handleSubtractScore}
-                disabled={!selectedPlayer}
-                className="flex-1 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition disabled:opacity-50"
-              >
-                - 减少分数
-              </button>
-            </div>
+            {scoreMode === 'personal' ? (
+              <>
+                <div className="p-4 bg-blue-50 rounded-lg mb-4">
+                  <p className="font-medium text-blue-800">当前玩家</p>
+                  <p className="text-xl font-bold text-blue-600">{currentPlayer?.name}</p>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    分数
+                  </label>
+                  <input
+                    type="number"
+                    value={points}
+                    onChange={(e) => setPoints(Math.max(1, Number(e.target.value) || 1))}
+                    min="1"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <div className="flex gap-3">
+                  <button
+                    onClick={handlePersonalAddScore}
+                    className="flex-1 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition"
+                  >
+                    + 给自己加分
+                  </button>
+                  <button
+                    onClick={handlePersonalSubtractScore}
+                    className="flex-1 py-3 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition"
+                  >
+                    - 给自己减分
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      玩家 A
+                    </label>
+                    <select
+                      value={mutualPlayer1}
+                      onChange={(e) => setMutualPlayer1(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">选择玩家 A</option>
+                      {room.players.map(player => (
+                        <option key={player.id} value={player.id}>
+                          {player.name} {player.id === currentPlayerId ? '(你)' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      玩家 B
+                    </label>
+                    <select
+                      value={mutualPlayer2}
+                      onChange={(e) => setMutualPlayer2(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">选择玩家 B</option>
+                      {room.players.map(player => (
+                        <option key={player.id} value={player.id}>
+                          {player.name} {player.id === currentPlayerId ? '(你)' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    分数
+                  </label>
+                  <input
+                    type="number"
+                    value={points}
+                    onChange={(e) => setPoints(Math.max(1, Number(e.target.value) || 1))}
+                    min="1"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleMutualScore}
+                    disabled={!mutualPlayer1 || !mutualPlayer2 || mutualPlayer1 === mutualPlayer2}
+                    className="flex-1 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50"
+                  >
+                    给两个玩家都加分
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
@@ -151,8 +235,8 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
         </button>
 
         <div className="mt-6 text-center text-sm text-gray-500">
-          <p>点击玩家旁边的按钮来更新分数</p>
-          <p>Click buttons to update scores</p>
+          <p>给自己加减分：只能给自己加分或减分</p>
+          <p>互相加分：选择两个玩家，都加分</p>
         </div>
       </div>
     </div>

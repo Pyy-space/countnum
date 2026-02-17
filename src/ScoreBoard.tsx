@@ -329,9 +329,9 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                   let actionColor = '';
                   
                   if (log.action === 'transfer') {
-                    actionEmoji = '🔄';
+                    actionEmoji = '🏆';
                     actionColor = 'text-blue-400';
-                    actionText = `${log.actorName} 给 ${log.targetName} 转了 ${log.amount} 分`;
+                    actionText = `${log.targetName} 从 ${log.actorName} 赢得了 ${log.amount} 分`;
                   } else if (log.action === 'add') {
                     actionEmoji = '➕';
                     actionColor = 'text-green-400';

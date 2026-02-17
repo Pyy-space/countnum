@@ -162,7 +162,7 @@ const App: React.FC = () => {
   const onUpdateScore = async (playerId: string, points: number) => {
     if (!currentRoom) return;
     try {
-      const { room } = await apiService.updateScore(currentRoom.id, playerId, points);
+      const { room } = await apiService.updateScore(currentRoom.id, playerId, points, currentPlayerId);
       setCurrentRoom(room);
     } catch (err) {
       console.error('Failed to update score:', err);

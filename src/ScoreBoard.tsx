@@ -7,12 +7,26 @@ interface Player {
   isReady: boolean;
 }
 
+interface ActionLog {
+  id: string;
+  timestamp: number;
+  actorId: string;
+  actorName: string;
+  action: 'add' | 'deduct' | 'transfer';
+  targetId?: string;
+  targetName?: string;
+  amount: number;
+  recipientId?: string;
+  recipientName?: string;
+}
+
 interface Room {
   id: string;
   maxPlayers: number;
   players: Player[];
   isPlaying: boolean;
   history?: any[];
+  actionLogs?: ActionLog[];
 }
 
 interface ScoreBoardProps {
@@ -150,7 +164,14 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                   <input
                     type="number"
                     value={points}
-                    onChange={(e) => setPoints(Math.max(0, Number(e.target.value) || 0))}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === '' || value === null) {
+                        setPoints(0);
+                      } else {
+                        setPoints(Math.max(0, Number(value)));
+                      }
+                    }}
                     min="0"
                     step="0.5"
                     className="w-full px-4 py-3 border border-violet-500/40 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-300 bg-slate-800/70 text-white placeholder-purple-400"
@@ -219,7 +240,14 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                   <input
                     type="number"
                     value={points}
-                    onChange={(e) => setPoints(Math.max(0, Number(e.target.value) || 0))}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === '' || value === null) {
+                        setPoints(0);
+                      } else {
+                        setPoints(Math.max(0, Number(value)));
+                      }
+                    }}
                     min="0"
                     step="0.5"
                     className="w-full px-4 py-3 border border-violet-500/40 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-300 bg-slate-800/70 text-white placeholder-purple-400"
@@ -262,6 +290,68 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
             🚪 离开房间
           </button>
         </div>
+
+        {room.actionLogs && room.actionLogs.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold mb-4 text-purple-300">📜 操作记录</h3>
+            <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 p-4 rounded-xl border border-violet-500/40 max-h-60 overflow-y-auto">
+              <div className="space-y-2">
+                {[...room.actionLogs].reverse().slice(0, 20).map((log) => {
+                  const isActor = log.actorId === currentPlayerId;
+                  const isTarget = log.targetId === currentPlayerId;
+                  
+                  let actionText = '';
+                  let actionEmoji = '';
+                  let actionColor = '';
+                  
+                  if (log.action === 'add') {
+                    actionEmoji = '➕';
+                    actionColor = 'text-green-400';
+                    if (log.actorId === log.targetId) {
+                      actionText = `${log.actorName} 给自己加了 ${log.amount} 分`;
+                    } else {
+                      actionText = `${log.actorName} 给 ${log.targetName} 加了 ${log.amount} 分`;
+                    }
+                  } else if (log.action === 'deduct') {
+                    actionEmoji = '➖';
+                    actionColor = 'text-red-400';
+                    if (log.actorId === log.targetId) {
+                      actionText = `${log.actorName} 给自己减了 ${log.amount} 分`;
+                    } else {
+                      actionText = `${log.actorName} 给 ${log.targetName} 减了 ${log.amount} 分`;
+                    }
+                  }
+                  
+                  const timeStr = new Date(log.timestamp).toLocaleTimeString('zh-CN', { 
+                    hour: '2-digit', 
+                    minute: '2-digit',
+                    second: '2-digit'
+                  });
+                  
+                  return (
+                    <div 
+                      key={log.id}
+                      className={`p-3 rounded-lg border transition-all ${
+                        isActor || isTarget
+                          ? 'bg-violet-900/30 border-violet-500/50' 
+                          : 'bg-slate-800/50 border-slate-700/50'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="flex-1">
+                          <p className={`text-sm font-medium ${actionColor}`}>
+                            {actionEmoji} {actionText}
+                          </p>
+                        </div>
+                        <span className="text-xs text-purple-400 whitespace-nowrap">{timeStr}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="mt-6 text-center text-sm text-purple-400">
           <p>🎯 给自己加减分：只能给自己加分或减分</p>

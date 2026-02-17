@@ -170,10 +170,10 @@ export class RoomStore {
             room.actionLogs.pop();
             
             // Determine who gave to whom
-            const giverId = points < 0 ? playerId : lastLog.targetId;
-            const giverName = points < 0 ? player.name : lastLog.targetName;
-            const receiverId = points > 0 ? playerId : lastLog.targetId;
-            const receiverName = points > 0 ? player.name : lastLog.targetName;
+            const giverId = points < 0 ? playerId : (lastLog.targetId || lastLog.actorId);
+            const giverName = points < 0 ? player.name : (lastLog.targetName || lastLog.actorName);
+            const receiverId = points > 0 ? playerId : (lastLog.targetId || lastLog.actorId);
+            const receiverName = points > 0 ? player.name : (lastLog.targetName || lastLog.actorName);
             
             const transferLog: ActionLog = {
               id: `log_${now}_${Math.random().toString(36).substring(2, 9)}`,

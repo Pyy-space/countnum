@@ -175,13 +175,14 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                       } else {
                         const num = Number(value);
                         if (!isNaN(num) && num >= 0) {
-                          setPoints(value);
+                          // Remove leading zeros by converting to number and back to string
+                          setPoints(num.toString());
                         }
                       }
                     }}
                     onBlur={(e) => {
                       if (e.target.value === '' || e.target.value === '-') {
-                        setPoints('1');
+                        setPoints('');
                       }
                     }}
                     min="0"
@@ -260,13 +261,14 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                       } else {
                         const num = Number(value);
                         if (!isNaN(num) && num >= 0) {
-                          setPoints(value);
+                          // Remove leading zeros by converting to number and back to string
+                          setPoints(num.toString());
                         }
                       }
                     }}
                     onBlur={(e) => {
                       if (e.target.value === '' || e.target.value === '-') {
-                        setPoints('1');
+                        setPoints('');
                       }
                     }}
                     min="0"

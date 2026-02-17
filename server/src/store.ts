@@ -147,15 +147,15 @@ export class RoomStore {
 
     const now = Date.now();
     
-    // Check if there's a recent complementary log entry (within 100ms) that could be merged
+    // Check if there's a recent complementary log entry (within 500ms) that could be merged
     // This detects mutual scoring where one player gains points and another loses the same amount
     let shouldCreateLog = true;
     if (room.actionLogs.length > 0) {
       const lastLog = room.actionLogs[room.actionLogs.length - 1];
       const timeDiff = now - lastLog.timestamp;
       
-      // If last log was within 100ms and involves complementary points (same amount, opposite sign)
-      if (timeDiff < 100 && Math.abs(lastLog.amount) === Math.abs(points)) {
+      // If last log was within 500ms and involves complementary points (same amount, opposite sign)
+      if (timeDiff < 500 && Math.abs(lastLog.amount) === Math.abs(points)) {
         // Check if this is a mutual transfer scenario:
         // - Last log added points to someone
         // - This log deducts points from someone else (or vice versa)

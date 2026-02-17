@@ -162,19 +162,19 @@ app.post('/api/rooms/:roomId/start', (req: Request, res: Response) => {
 app.put('/api/rooms/:roomId/score', (req: Request, res: Response) => {
   try {
     const { roomId } = req.params;
-    const { playerId, points } = req.body;
+    const { playerId, points, actorId } = req.body;
 
     if (!playerId || typeof points !== 'number') {
       return res.status(400).json({ error: 'Player ID and points are required' });
     }
 
-    const room = roomStore.updateScore(roomId.toUpperCase(), playerId, points);
+    const room = roomStore.updateScore(roomId.toUpperCase(), playerId, points, actorId);
 
     if (!room) {
       return res.status(404).json({ error: 'Room not found' });
     }
 
-    console.log(`Player ${playerId} in room ${roomId} scored ${points} points`);
+    console.log(`Player ${playerId} in room ${roomId} scored ${points} points (actor: ${actorId || playerId})`);
     
     res.json({ room });
   } catch (error) {

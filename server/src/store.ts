@@ -5,6 +5,19 @@ export interface Player {
   isReady: boolean;
 }
 
+export interface ActionLog {
+  id: string;
+  timestamp: number;
+  actorId: string;
+  actorName: string;
+  action: 'add' | 'deduct' | 'transfer';
+  targetId?: string;
+  targetName?: string;
+  amount: number;
+  recipientId?: string;
+  recipientName?: string;
+}
+
 export interface Room {
   id: string;
   maxPlayers: number;
@@ -12,6 +25,7 @@ export interface Room {
   isPlaying: boolean;
   createdAt: Date;
   history: RoomHistory[];
+  actionLogs: ActionLog[];
 }
 
 export interface RoomHistory {
@@ -37,7 +51,8 @@ export class RoomStore {
       }],
       isPlaying: false,
       createdAt: new Date(),
-      history: []
+      history: [],
+      actionLogs: []
     };
 
     this.rooms.set(roomId, room);
@@ -112,7 +127,7 @@ export class RoomStore {
     return room;
   }
 
-  updateScore(roomId: string, playerId: string, points: number): Room | null {
+  updateScore(roomId: string, playerId: string, points: number, actorId?: string): Room | null {
     const room = this.rooms.get(roomId);
     if (!room) {
       return null;
@@ -123,7 +138,34 @@ export class RoomStore {
       throw new Error('Player not found in room');
     }
 
+    const actor = actorId ? room.players.find(p => p.id === actorId) : player;
+    if (!actor) {
+      throw new Error('Actor not found in room');
+    }
+
     player.score += points;
+
+    // Determine action type
+    let action: 'add' | 'deduct' | 'transfer' = points > 0 ? 'add' : 'deduct';
+    
+    // Log the action
+    const actionLog: ActionLog = {
+      id: `log_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      timestamp: Date.now(),
+      actorId: actor.id,
+      actorName: actor.name,
+      action,
+      targetId: playerId,
+      targetName: player.name,
+      amount: Math.abs(points)
+    };
+
+    room.actionLogs.push(actionLog);
+
+    // Keep only last 100 action logs
+    if (room.actionLogs.length > 100) {
+      room.actionLogs.shift();
+    }
 
     this.addHistory(room);
 

@@ -9,11 +9,25 @@ export interface Player {
   isReady: boolean;
 }
 
+export interface ActionLog {
+  id: string;
+  timestamp: number;
+  actorId: string;
+  actorName: string;
+  action: 'add' | 'deduct' | 'transfer';
+  targetId?: string;
+  targetName?: string;
+  amount: number;
+  recipientId?: string;
+  recipientName?: string;
+}
+
 export interface Room {
   id: string;
   maxPlayers: number;
   players: Player[];
   isPlaying: boolean;
+  actionLogs?: ActionLog[];
 }
 
 export interface CreateRoomResponse {
@@ -81,10 +95,11 @@ class ApiService {
     return response.data;
   }
 
-  async updateScore(roomId: string, playerId: string, points: number): Promise<UpdateRoomResponse> {
+  async updateScore(roomId: string, playerId: string, points: number, actorId?: string): Promise<UpdateRoomResponse> {
     const response = await this.axiosInstance.put(`/rooms/${roomId}/score`, {
       playerId,
       points,
+      actorId,
     });
     return response.data;
   }

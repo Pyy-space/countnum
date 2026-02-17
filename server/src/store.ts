@@ -145,22 +145,75 @@ export class RoomStore {
 
     player.score += points;
 
-    // Determine action type
-    let action: 'add' | 'deduct' | 'transfer' = points > 0 ? 'add' : 'deduct';
+    const now = Date.now();
     
-    // Log the action
-    const actionLog: ActionLog = {
-      id: `log_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
-      timestamp: Date.now(),
-      actorId: actor.id,
-      actorName: actor.name,
-      action,
-      targetId: playerId,
-      targetName: player.name,
-      amount: Math.abs(points)
-    };
+    // Check if there's a recent complementary log entry (within 100ms) that could be merged
+    // This detects mutual scoring where one player gains points and another loses the same amount
+    let shouldCreateLog = true;
+    if (room.actionLogs.length > 0) {
+      const lastLog = room.actionLogs[room.actionLogs.length - 1];
+      const timeDiff = now - lastLog.timestamp;
+      
+      // If last log was within 100ms and involves complementary points (same amount, opposite sign)
+      if (timeDiff < 100 && Math.abs(lastLog.amount) === Math.abs(points)) {
+        // Check if this is a mutual transfer scenario:
+        // - Last log added points to someone
+        // - This log deducts points from someone else (or vice versa)
+        // - Different players involved
+        if (lastLog.targetId !== playerId) {
+          const lastWasPositive = lastLog.action === 'add';
+          const currentIsNegative = points < 0;
+          
+          // If last was positive and current is negative (or vice versa), it's a transfer
+          if ((lastWasPositive && currentIsNegative) || (!lastWasPositive && !currentIsNegative)) {
+            // Remove the last log and create a consolidated transfer log
+            room.actionLogs.pop();
+            
+            // Determine who gave to whom
+            const giverId = points < 0 ? playerId : lastLog.targetId;
+            const giverName = points < 0 ? player.name : lastLog.targetName;
+            const receiverId = points > 0 ? playerId : lastLog.targetId;
+            const receiverName = points > 0 ? player.name : lastLog.targetName;
+            
+            const transferLog: ActionLog = {
+              id: `log_${now}_${Math.random().toString(36).substring(2, 9)}`,
+              timestamp: now,
+              actorId: giverId,
+              actorName: giverName,
+              action: 'transfer',
+              targetId: receiverId,
+              targetName: receiverName,
+              amount: Math.abs(points),
+              recipientId: receiverId,
+              recipientName: receiverName
+            };
+            
+            room.actionLogs.push(transferLog);
+            shouldCreateLog = false;
+          }
+        }
+      }
+    }
+    
+    // Create individual log entry if no consolidation happened
+    if (shouldCreateLog) {
+      // Determine action type
+      let action: 'add' | 'deduct' | 'transfer' = points > 0 ? 'add' : 'deduct';
+      
+      // Log the action
+      const actionLog: ActionLog = {
+        id: `log_${now}_${Math.random().toString(36).substring(2, 9)}`,
+        timestamp: now,
+        actorId: actor.id,
+        actorName: actor.name,
+        action,
+        targetId: playerId,
+        targetName: player.name,
+        amount: Math.abs(points)
+      };
 
-    room.actionLogs.push(actionLog);
+      room.actionLogs.push(actionLog);
+    }
 
     // Keep only last 100 action logs
     if (room.actionLogs.length > 100) {

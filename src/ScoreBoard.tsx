@@ -41,31 +41,35 @@ type ScoreMode = 'personal' | 'mutual';
 
 const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdateScore, onUndoScore, onLeaveRoom }) => {
   const [scoreMode, setScoreMode] = useState<ScoreMode>('personal');
-  const [points, setPoints] = useState<number>(1);
+  const [points, setPoints] = useState<string>('1');
   const [mutualPlayer1, setMutualPlayer1] = useState<string>('');
   const [mutualPlayer2, setMutualPlayer2] = useState<string>('');
 
   const canUndo = room.history && room.history.length > 0;
 
   const handlePersonalAddScore = () => {
-    onUpdateScore(currentPlayerId, points);
+    const numPoints = Number(points) || 0;
+    onUpdateScore(currentPlayerId, numPoints);
   };
 
   const handlePersonalSubtractScore = () => {
-    onUpdateScore(currentPlayerId, -points);
+    const numPoints = Number(points) || 0;
+    onUpdateScore(currentPlayerId, -numPoints);
   };
 
   const handleMutualScore = () => {
     if (mutualPlayer1 && mutualPlayer2 && mutualPlayer1 !== mutualPlayer2) {
-      onUpdateScore(mutualPlayer1, points);
-      onUpdateScore(mutualPlayer2, -points);
+      const numPoints = Number(points) || 0;
+      onUpdateScore(mutualPlayer1, numPoints);
+      onUpdateScore(mutualPlayer2, -numPoints);
     }
   };
 
   const handleMutualReverseScore = () => {
     if (mutualPlayer1 && mutualPlayer2 && mutualPlayer1 !== mutualPlayer2) {
-      onUpdateScore(mutualPlayer1, -points);
-      onUpdateScore(mutualPlayer2, points);
+      const numPoints = Number(points) || 0;
+      onUpdateScore(mutualPlayer1, -numPoints);
+      onUpdateScore(mutualPlayer2, numPoints);
     }
   };
 
@@ -166,14 +170,23 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                     value={points}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (value === '' || value === null) {
-                        setPoints(0);
+                      if (value === '' || value === '-') {
+                        setPoints('');
                       } else {
-                        setPoints(Math.max(0, Number(value)));
+                        const num = Number(value);
+                        if (!isNaN(num) && num >= 0) {
+                          setPoints(value);
+                        }
+                      }
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === '' || e.target.value === '-') {
+                        setPoints('1');
                       }
                     }}
                     min="0"
                     step="0.5"
+                    placeholder="输入分数"
                     className="w-full px-4 py-3 border border-violet-500/40 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-300 bg-slate-800/70 text-white placeholder-purple-400"
                   />
                 </div>
@@ -242,14 +255,23 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                     value={points}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (value === '' || value === null) {
-                        setPoints(0);
+                      if (value === '' || value === '-') {
+                        setPoints('');
                       } else {
-                        setPoints(Math.max(0, Number(value)));
+                        const num = Number(value);
+                        if (!isNaN(num) && num >= 0) {
+                          setPoints(value);
+                        }
+                      }
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === '' || e.target.value === '-') {
+                        setPoints('1');
                       }
                     }}
                     min="0"
                     step="0.5"
+                    placeholder="输入分数"
                     className="w-full px-4 py-3 border border-violet-500/40 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-300 bg-slate-800/70 text-white placeholder-purple-400"
                   />
                 </div>
@@ -260,14 +282,14 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                     disabled={!mutualPlayer1 || !mutualPlayer2 || mutualPlayer1 === mutualPlayer2}
                     className="flex-1 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow-lg shadow-green-500/40 disabled:opacity-50"
                   >
-                    ➕ 玩家 A +{points}，玩家 B -{points}
+                    ➕ 玩家 A +{points || 0}，玩家 B -{points || 0}
                   </button>
                   <button
                     onClick={handleMutualReverseScore}
                     disabled={!mutualPlayer1 || !mutualPlayer2 || mutualPlayer1 === mutualPlayer2}
                     className="flex-1 py-3 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-xl font-semibold hover:from-orange-600 hover:to-amber-700 transition-all duration-300 shadow-lg shadow-orange-500/40 disabled:opacity-50"
                   >
-                    🔄 玩家 A -{points}，玩家 B +{points}
+                    🔄 玩家 A -{points || 0}，玩家 B +{points || 0}
                   </button>
                 </div>
               </>
@@ -304,7 +326,11 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                   let actionEmoji = '';
                   let actionColor = '';
                   
-                  if (log.action === 'add') {
+                  if (log.action === 'transfer') {
+                    actionEmoji = '🔄';
+                    actionColor = 'text-blue-400';
+                    actionText = `${log.actorName} 给 ${log.targetName} 转了 ${log.amount} 分`;
+                  } else if (log.action === 'add') {
                     actionEmoji = '➕';
                     actionColor = 'text-green-400';
                     if (log.actorId === log.targetId) {

@@ -170,6 +170,8 @@ export class RoomStore {
             room.actionLogs.pop();
             
             // Determine who gave to whom
+            // Note: targetId/targetName should always be present for add/deduct logs
+            // The fallback to actorId/actorName is for type safety only
             const giverId = points < 0 ? playerId : (lastLog.targetId || lastLog.actorId);
             const giverName = points < 0 ? player.name : (lastLog.targetName || lastLog.actorName);
             const receiverId = points > 0 ? playerId : (lastLog.targetId || lastLog.actorId);

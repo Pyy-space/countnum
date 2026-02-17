@@ -150,8 +150,9 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                   <input
                     type="number"
                     value={points}
-                    onChange={(e) => setPoints(Math.max(1, Number(e.target.value) || 1))}
-                    min="1"
+                    onChange={(e) => setPoints(Math.max(0, Number(e.target.value) || 0))}
+                    min="0"
+                    step="0.5"
                     className="w-full px-4 py-3 border border-violet-500/40 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-300 bg-slate-800/70 text-white placeholder-purple-400"
                   />
                 </div>
@@ -218,8 +219,9 @@ const ScoreBoard: React.FC<ScoreBoardProps> = ({ room, currentPlayerId, onUpdate
                   <input
                     type="number"
                     value={points}
-                    onChange={(e) => setPoints(Math.max(1, Number(e.target.value) || 1))}
-                    min="1"
+                    onChange={(e) => setPoints(Math.max(0, Number(e.target.value) || 0))}
+                    min="0"
+                    step="0.5"
                     className="w-full px-4 py-3 border border-violet-500/40 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all duration-300 bg-slate-800/70 text-white placeholder-purple-400"
                   />
                 </div>
